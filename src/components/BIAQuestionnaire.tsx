@@ -1,0 +1,164 @@
+
+import React, { useState } from 'react';
+import { BiaFormData, FormStep, initialFormData } from '@/types/bia.types';
+import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
+import { exportToCSV, submitAsEmail, validateFormData } from '@/utils/exportUtils';
+import StepIndicator from '@/components/StepIndicator';
+
+// Steps
+import Step1General from './biaSteps/Step1General';
+import Step2Processes from './biaSteps/Step2Processes';
+import Step3Downtime from './biaSteps/Step3Downtime';
+import Step4Resources from './biaSteps/Step4Resources';
+import Step5Recovery from './biaSteps/Step5Recovery';
+import Step6Backup from './biaSteps/Step6Backup';
+import Step7Communication from './biaSteps/Step7Communication';
+import Step8RtoRpo from './biaSteps/Step8RtoRpo';
+import Step9Future from './biaSteps/Step9Future';
+import Step10Comments from './biaSteps/Step10Comments';
+
+const steps: FormStep[] = [
+  { id: 1, title: 'General Info' },
+  { id: 2, title: 'Processes' },
+  { id: 3, title: 'Downtime' },
+  { id: 4, title: 'Resources' },
+  { id: 5, title: 'Recovery' },
+  { id: 6, title: 'Backup' },
+  { id: 7, title: 'Communication' },
+  { id: 8, title: 'RTO & RPO' },
+  { id: 9, title: 'Future' },
+  { id: 10, title: 'Comments' },
+];
+
+const BIAQuestionnaire: React.FC = () => {
+  const [currentStep, setCurrentStep] = useState(1);
+  const [formData, setFormData] = useState<BiaFormData>(initialFormData);
+  const { toast } = useToast();
+  
+  const updateFormData = (field: keyof BiaFormData, value: string) => {
+    setFormData({
+      ...formData,
+      [field]: value,
+    });
+  };
+  
+  const goToPreviousStep = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
+      window.scrollTo(0, 0);
+    }
+  };
+  
+  const goToNextStep = () => {
+    const errors = validateFormData(formData, currentStep);
+    
+    if (errors.length > 0) {
+      errors.forEach(error => {
+        toast({
+          title: "Validation Error",
+          description: error,
+          variant: "destructive",
+        });
+      });
+      return;
+    }
+    
+    if (currentStep < steps.length) {
+      setCurrentStep(currentStep + 1);
+      window.scrollTo(0, 0);
+    }
+  };
+  
+  const handleExportToCSV = () => {
+    exportToCSV(formData);
+    toast({
+      title: "Export Successful",
+      description: "The BIA questionnaire has been exported as a CSV file.",
+    });
+  };
+  
+  const handleSubmitAsEmail = () => {
+    submitAsEmail(formData);
+    toast({
+      title: "Email Preparation",
+      description: "Your email client should open with the BIA data.",
+    });
+  };
+  
+  const renderStepContent = () => {
+    switch (currentStep) {
+      case 1:
+        return <Step1General formData={formData} updateFormData={updateFormData} />;
+      case 2:
+        return <Step2Processes formData={formData} updateFormData={updateFormData} />;
+      case 3:
+        return <Step3Downtime formData={formData} updateFormData={updateFormData} />;
+      case 4:
+        return <Step4Resources formData={formData} updateFormData={updateFormData} />;
+      case 5:
+        return <Step5Recovery formData={formData} updateFormData={updateFormData} />;
+      case 6:
+        return <Step6Backup formData={formData} updateFormData={updateFormData} />;
+      case 7:
+        return <Step7Communication formData={formData} updateFormData={updateFormData} />;
+      case 8:
+        return <Step8RtoRpo formData={formData} updateFormData={updateFormData} />;
+      case 9:
+        return <Step9Future formData={formData} updateFormData={updateFormData} />;
+      case 10:
+        return <Step10Comments formData={formData} updateFormData={updateFormData} />;
+      default:
+        return <Step1General formData={formData} updateFormData={updateFormData} />;
+    }
+  };
+  
+  return (
+    <div className="w-full max-w-5xl mx-auto p-4">
+      <h1 className="text-3xl font-bold text-center mb-8">Business Impact Analysis (BIA) Questionnaire</h1>
+      
+      <StepIndicator steps={steps} currentStep={currentStep} />
+      
+      <div className="mb-6">
+        {renderStepContent()}
+      </div>
+      
+      <div className="flex justify-between mt-8">
+        <Button
+          onClick={goToPreviousStep}
+          disabled={currentStep === 1}
+          variant="outline"
+          className="min-w-[120px]"
+        >
+          Previous
+        </Button>
+        
+        {currentStep < steps.length ? (
+          <Button 
+            onClick={goToNextStep}
+            className="min-w-[120px] bg-bia-primary hover:bg-bia-primary-hover"
+          >
+            Next
+          </Button>
+        ) : (
+          <div className="flex gap-2">
+            <Button 
+              onClick={handleSubmitAsEmail}
+              className="min-w-[120px] bg-bia-primary hover:bg-bia-primary-hover"
+            >
+              Submit as Email
+            </Button>
+            <Button 
+              onClick={handleExportToCSV}
+              className="min-w-[120px] bg-bia-secondary hover:bg-bia-secondary-hover"
+            >
+              Export as CSV
+            </Button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default BIAQuestionnaire;
