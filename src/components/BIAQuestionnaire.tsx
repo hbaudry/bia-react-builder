@@ -114,21 +114,21 @@ const BIAQuestionnaire: React.FC = () => {
   };
   
   return (
-    <div className="w-full max-w-5xl mx-auto p-4">
-      <h1 className="text-3xl font-bold text-center mb-8">Business Impact Analysis (BIA) Questionnaire</h1>
+    <div className="w-full max-w-4xl mx-auto">
+      <div className="bg-white shadow-sm rounded-2xl p-6 mb-8">
+        <StepIndicator steps={steps} currentStep={currentStep} />
+      </div>
       
-      <StepIndicator steps={steps} currentStep={currentStep} />
-      
-      <div className="mb-6">
+      <div className="mb-6 transition-all duration-300 animate-fade-in">
         {renderStepContent()}
       </div>
       
-      <div className="flex justify-between mt-8">
+      <div className="flex justify-between mt-10">
         <Button
           onClick={goToPreviousStep}
           disabled={currentStep === 1}
           variant="outline"
-          className="min-w-[120px]"
+          className="min-w-[140px] py-6 text-base font-medium shadow-sm hover:bg-gray-100"
         >
           Previous
         </Button>
@@ -136,21 +136,21 @@ const BIAQuestionnaire: React.FC = () => {
         {currentStep < steps.length ? (
           <Button 
             onClick={goToNextStep}
-            className="min-w-[120px] bg-bia-primary hover:bg-bia-primary-hover"
+            className="min-w-[140px] py-6 text-base font-medium shadow-md bg-bia-primary hover:bg-bia-primary-hover"
           >
-            Next
+            Continue
           </Button>
         ) : (
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             <Button 
               onClick={handleSubmitAsEmail}
-              className="min-w-[120px] bg-bia-primary hover:bg-bia-primary-hover"
+              className="min-w-[140px] py-6 text-base font-medium shadow-md bg-bia-primary hover:bg-bia-primary-hover"
             >
               Submit as Email
             </Button>
             <Button 
               onClick={handleExportToCSV}
-              className="min-w-[120px] bg-bia-secondary hover:bg-bia-secondary-hover"
+              className="min-w-[140px] py-6 text-base font-medium shadow-md bg-bia-secondary hover:bg-bia-secondary-hover"
             >
               Export as CSV
             </Button>

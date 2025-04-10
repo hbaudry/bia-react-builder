@@ -7,8 +7,8 @@ interface FormCardProps {
 
 const FormCard: React.FC<FormCardProps> = ({ children }) => {
   return (
-    <Card className="bg-white shadow-md border-none">
-      <CardContent className="p-6">
+    <Card className="bg-white shadow-lg border-none rounded-xl overflow-hidden">
+      <CardContent className="p-8">
         {children}
       </CardContent>
     </Card>
