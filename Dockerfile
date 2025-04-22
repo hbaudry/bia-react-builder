@@ -1,33 +1,35 @@
 
-# Use Node.js LTS as base image
-FROM node:20-alpine as build
+# --- Builder Stage ---
+FROM node:20-alpine AS builder
 
-# Set working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json
 COPY package*.json ./
+RUN npm ci --omit=dev
 
-# Install dependencies
-RUN npm ci
-
-# Copy all files
 COPY . .
-
-# Build the application
 RUN npm run build
 
-# Production stage
+# --- Production Image ---
 FROM nginx:alpine
 
-# Copy built assets from the build stage
-COPY --from=build /app/dist /usr/share/nginx/html
+# Remove default nginx website
+RUN rm -rf /usr/share/nginx/html/*
 
-# Copy custom nginx config
+# Copy built frontend
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+# Copy custom nginx config (assumed to be in project root)
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Expose port 80
+# Set file permissions for nginx user (run as non-root for security)
+RUN chown -R nginx:nginx /usr/share/nginx/html
+
+USER nginx
+
 EXPOSE 80
 
-# Start Nginx server
+HEALTHCHECK --interval=30s --timeout=3s \
+  CMD wget -q --spider http://localhost || exit 1
+
 CMD ["nginx", "-g", "daemon off;"]
