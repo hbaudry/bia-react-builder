@@ -1,22 +1,9 @@
-
 import React, { useState } from 'react';
 import { BiaFormData, FormStep, initialFormData } from '@/types/bia.types';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { exportToCSV, submitAsEmail, validateFormData } from '@/utils/exportUtils';
 import StepIndicator from '@/components/StepIndicator';
-
-// Steps
-import Step1General from './biaSteps/Step1General';
-import Step2Processes from './biaSteps/Step2Processes';
-import Step3Downtime from './biaSteps/Step3Downtime';
-import Step4Resources from './biaSteps/Step4Resources';
-import Step5Recovery from './biaSteps/Step5Recovery';
-import Step6Backup from './biaSteps/Step6Backup';
-import Step7Communication from './biaSteps/Step7Communication';
-import Step8RtoRpo from './biaSteps/Step8RtoRpo';
-import Step9Future from './biaSteps/Step9Future';
-import Step10Comments from './biaSteps/Step10Comments';
 
 const steps: FormStep[] = [
   { id: 1, title: 'General Info' },
@@ -34,6 +21,7 @@ const steps: FormStep[] = [
 const BIAQuestionnaire: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<BiaFormData>(initialFormData);
+  const [skippedSteps, setSkippedSteps] = useState<number[]>([]);
   const { toast } = useToast();
   
   const updateFormData = (field: keyof BiaFormData, value: string) => {
@@ -45,8 +33,25 @@ const BIAQuestionnaire: React.FC = () => {
   
   const goToPreviousStep = () => {
     if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
+      let prevStep = currentStep - 1;
+      while (skippedSteps.includes(prevStep) && prevStep > 1) {
+        prevStep--;
+      }
+      setCurrentStep(prevStep);
       window.scrollTo(0, 0);
+    }
+  };
+  
+  const skipStep = () => {
+    if (currentStep < steps.length) {
+      setSkippedSteps([...skippedSteps, currentStep]);
+      setCurrentStep(currentStep + 1);
+      window.scrollTo(0, 0);
+      
+      toast({
+        title: "Step Skipped",
+        description: "You can always come back to this step later.",
+      });
     }
   };
   
@@ -65,7 +70,11 @@ const BIAQuestionnaire: React.FC = () => {
     }
     
     if (currentStep < steps.length) {
-      setCurrentStep(currentStep + 1);
+      let nextStep = currentStep + 1;
+      while (skippedSteps.includes(nextStep) && nextStep < steps.length) {
+        nextStep++;
+      }
+      setCurrentStep(nextStep);
       window.scrollTo(0, 0);
     }
   };
@@ -116,7 +125,7 @@ const BIAQuestionnaire: React.FC = () => {
   return (
     <div className="w-full max-w-4xl mx-auto">
       <div className="bg-white shadow-sm rounded-2xl p-6 mb-8">
-        <StepIndicator steps={steps} currentStep={currentStep} />
+        <StepIndicator steps={steps} currentStep={currentStep} skippedSteps={skippedSteps} />
       </div>
       
       <div className="mb-6 transition-all duration-300 animate-fade-in">
@@ -133,29 +142,41 @@ const BIAQuestionnaire: React.FC = () => {
           Previous
         </Button>
         
-        {currentStep < steps.length ? (
-          <Button 
-            onClick={goToNextStep}
-            className="min-w-[140px] py-6 text-base font-medium shadow-md bg-bia-primary hover:bg-bia-primary-hover"
-          >
-            Continue
-          </Button>
-        ) : (
-          <div className="flex gap-3">
+        <div className="flex gap-3">
+          {currentStep < steps.length && (
+            <Button
+              onClick={skipStep}
+              variant="outline"
+              className="min-w-[140px] py-6 text-base font-medium shadow-sm bg-soft-gray hover:bg-gray-100"
+            >
+              Skip Step
+            </Button>
+          )}
+          
+          {currentStep < steps.length ? (
             <Button 
-              onClick={handleSubmitAsEmail}
+              onClick={goToNextStep}
               className="min-w-[140px] py-6 text-base font-medium shadow-md bg-bia-primary hover:bg-bia-primary-hover"
             >
-              Submit as Email
+              Continue
             </Button>
-            <Button 
-              onClick={handleExportToCSV}
-              className="min-w-[140px] py-6 text-base font-medium shadow-md bg-bia-secondary hover:bg-bia-secondary-hover"
-            >
-              Export as CSV
-            </Button>
-          </div>
-        )}
+          ) : (
+            <div className="flex gap-3">
+              <Button 
+                onClick={handleSubmitAsEmail}
+                className="min-w-[140px] py-6 text-base font-medium shadow-md bg-bia-primary hover:bg-bia-primary-hover"
+              >
+                Submit as Email
+              </Button>
+              <Button 
+                onClick={handleExportToCSV}
+                className="min-w-[140px] py-6 text-base font-medium shadow-md bg-bia-secondary hover:bg-bia-secondary-hover"
+              >
+                Export as CSV
+              </Button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -1,14 +1,15 @@
 
-import { Check } from 'lucide-react';
+import { Check, SkipForward } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { FormStep } from '@/types/bia.types';
 
 interface StepIndicatorProps {
   steps: FormStep[];
   currentStep: number;
+  skippedSteps?: number[];
 }
 
-const StepIndicator: React.FC<StepIndicatorProps> = ({ steps, currentStep }) => {
+const StepIndicator: React.FC<StepIndicatorProps> = ({ steps, currentStep, skippedSteps = [] }) => {
   return (
     <div className="flex justify-center items-center">
       <div className="w-full max-w-3xl">
@@ -16,6 +17,7 @@ const StepIndicator: React.FC<StepIndicatorProps> = ({ steps, currentStep }) => 
           {steps.map((step) => {
             const isCompleted = step.id < currentStep;
             const isCurrent = step.id === currentStep;
+            const isSkipped = skippedSteps.includes(step.id);
             
             return (
               <div key={step.id} className="flex flex-col items-center relative">
@@ -24,11 +26,14 @@ const StepIndicator: React.FC<StepIndicatorProps> = ({ steps, currentStep }) => 
                     "w-10 h-10 rounded-full flex items-center justify-center mb-2 transition-all duration-300",
                     isCompleted ? "bg-bia-primary border-bia-primary text-white shadow-md" : 
                     isCurrent ? "border-2 border-bia-primary text-bia-primary" : 
+                    isSkipped ? "bg-gray-200 border-gray-300 text-gray-500" :
                     "border-2 border-gray-300 text-gray-300"
                   )}
                 >
                   {isCompleted ? (
                     <Check size={18} strokeWidth={3} />
+                  ) : isSkipped ? (
+                    <SkipForward size={18} />
                   ) : (
                     <span className="text-sm font-bold">{step.id}</span>
                   )}
@@ -38,6 +43,7 @@ const StepIndicator: React.FC<StepIndicatorProps> = ({ steps, currentStep }) => 
                     "text-xs font-medium hidden md:block transition-colors duration-300",
                     isCurrent ? "text-bia-primary font-bold" : 
                     isCompleted ? "text-bia-primary" : 
+                    isSkipped ? "text-gray-400 italic" :
                     "text-gray-400"
                   )}
                 >
