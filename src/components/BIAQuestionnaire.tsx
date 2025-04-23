@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { BiaFormData, FormStep, initialFormData } from '@/types/bia.types';
 import { Button } from '@/components/ui/button';
@@ -12,6 +13,18 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+
+// Import step components
+import Step1General from '@/components/biaSteps/Step1General';
+import Step2Processes from '@/components/biaSteps/Step2Processes';
+import Step3Downtime from '@/components/biaSteps/Step3Downtime';
+import Step4Resources from '@/components/biaSteps/Step4Resources';
+import Step5Recovery from '@/components/biaSteps/Step5Recovery';
+import Step6Backup from '@/components/biaSteps/Step6Backup';
+import Step7Communication from '@/components/biaSteps/Step7Communication';
+import Step8RtoRpo from '@/components/biaSteps/Step8RtoRpo';
+import Step9Future from '@/components/biaSteps/Step9Future';
+import Step10Comments from '@/components/biaSteps/Step10Comments';
 
 const steps: FormStep[] = [
   { id: 1, title: 'General Info' },
