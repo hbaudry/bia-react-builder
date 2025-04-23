@@ -5,18 +5,13 @@ import { useToast } from '@/hooks/use-toast';
 import { exportToCSV, submitAsEmail, validateFormData } from '@/utils/exportUtils';
 import StepIndicator from '@/components/StepIndicator';
 import { downloadBackup, restoreFromBackup } from '@/utils/backupUtils';
-import { Upload } from 'lucide-react';
-
-import Step1General from '@/components/biaSteps/Step1General';
-import Step2Processes from '@/components/biaSteps/Step2Processes';
-import Step3Downtime from '@/components/biaSteps/Step3Downtime';
-import Step4Resources from '@/components/biaSteps/Step4Resources';
-import Step5Recovery from '@/components/biaSteps/Step5Recovery';
-import Step6Backup from '@/components/biaSteps/Step6Backup';
-import Step7Communication from '@/components/biaSteps/Step7Communication';
-import Step8RtoRpo from '@/components/biaSteps/Step8RtoRpo';
-import Step9Future from '@/components/biaSteps/Step9Future';
-import Step10Comments from '@/components/biaSteps/Step10Comments';
+import { Save, Upload } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const steps: FormStep[] = [
   { id: 1, title: 'General Info' },
@@ -169,31 +164,28 @@ const BIAQuestionnaire: React.FC = () => {
       <div className="bg-white shadow-sm rounded-2xl p-6 mb-8">
         <div className="flex justify-between items-center mb-4">
           <StepIndicator steps={steps} currentStep={currentStep} skippedSteps={skippedSteps} />
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              onClick={handleBackup}
-              className="gap-2"
-            >
-              Backup Data
-            </Button>
-            <div className="relative">
-              <input
-                type="file"
-                accept=".json"
-                onChange={handleRestore}
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                title="Restore from backup"
-              />
-              <Button
-                variant="outline"
-                className="gap-2"
-              >
-                <Upload className="w-4 h-4" />
-                Restore
-              </Button>
-            </div>
-          </div>
+          
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline">Options</Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="bg-white">
+              <DropdownMenuItem onClick={handleBackup}>
+                <Save className="w-4 h-4 mr-2" />
+                Backup Data
+              </DropdownMenuItem>
+              <DropdownMenuItem onSelect={(e) => {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.json';
+                input.onchange = (event) => handleRestore(event as React.ChangeEvent<HTMLInputElement>);
+                input.click();
+              }}>
+                <Upload className="w-4 h-4 mr-2" />
+                Restore Backup
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
       
