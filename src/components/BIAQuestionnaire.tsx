@@ -12,6 +12,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Menu } from 'lucide-react';
 
 // Import step components
 import Step1General from '@/components/biaSteps/Step1General';
@@ -184,7 +185,9 @@ const BIAQuestionnaire: React.FC = () => {
           
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline">Options</Button>
+              <Button variant="outline" size="icon">
+                <Menu className="h-5 w-5" />
+              </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="bg-white">
               <DropdownMenuItem onClick={handleBackup}>
