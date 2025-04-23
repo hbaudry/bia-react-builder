@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, ChangeEvent } from 'react';
 import { BiaFormData, FormStep, initialFormData } from '@/types/bia.types';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
@@ -124,7 +123,7 @@ const BIAQuestionnaire: React.FC = () => {
     });
   };
 
-  const handleRestore = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleRestore = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -143,6 +142,11 @@ const BIAQuestionnaire: React.FC = () => {
           variant: "destructive",
         });
       });
+  };
+
+  const handleFileInputChange = (e: Event) => {
+    const inputEvent = e as unknown as ChangeEvent<HTMLInputElement>;
+    handleRestore(inputEvent);
   };
 
   const renderStepContent = () => {
@@ -191,7 +195,7 @@ const BIAQuestionnaire: React.FC = () => {
                 const input = document.createElement('input');
                 input.type = 'file';
                 input.accept = '.json';
-                input.onchange = (event) => handleRestore(event as React.ChangeEvent<HTMLInputElement>);
+                input.onchange = handleFileInputChange;
                 input.click();
               }}>
                 <Upload className="w-4 h-4 mr-2" />
