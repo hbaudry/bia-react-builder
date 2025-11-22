@@ -10,7 +10,7 @@ interface Step9FutureProps {
   updateFormData: (field: keyof BiaFormData, value: string) => void;
 }
 
-const Step9Future: React.FC<Step9FutureProps> = ({ formData, updateFormData }) => {
+const Step9Future: React.FC<Step9FutureProps> = React.memo(({ formData, updateFormData }) => {
   return (
     <FormCard>
       <h2 className="text-xl font-bold mb-6">9. Future Considerations</h2>
@@ -40,6 +40,8 @@ const Step9Future: React.FC<Step9FutureProps> = ({ formData, updateFormData }) =
       </div>
     </FormCard>
   );
-};
+});
+
+Step9Future.displayName = 'Step9Future';
 
 export default Step9Future;

@@ -10,7 +10,7 @@ interface Step2ProcessesProps {
   updateFormData: (field: keyof BiaFormData, value: string) => void;
 }
 
-const Step2Processes: React.FC<Step2ProcessesProps> = ({ formData, updateFormData }) => {
+const Step2Processes: React.FC<Step2ProcessesProps> = React.memo(({ formData, updateFormData }) => {
   return (
     <FormCard>
       <h2 className="text-xl font-bold mb-6">2. Key Processes and Applications</h2>
@@ -66,6 +66,8 @@ const Step2Processes: React.FC<Step2ProcessesProps> = ({ formData, updateFormDat
       </div>
     </FormCard>
   );
-};
+});
+
+Step2Processes.displayName = 'Step2Processes';
 
 export default Step2Processes;

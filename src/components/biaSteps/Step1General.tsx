@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { BiaFormData } from '@/types/bia.types';
 import FormFieldLabel from '@/components/FormFieldLabel';
@@ -10,7 +9,7 @@ interface Step1GeneralProps {
   updateFormData: (field: keyof BiaFormData, value: string) => void;
 }
 
-const Step1General: React.FC<Step1GeneralProps> = ({ formData, updateFormData }) => {
+const Step1General: React.FC<Step1GeneralProps> = React.memo(({ formData, updateFormData }) => {
   return (
     <FormCard>
       <h2 className="text-xl font-bold mb-6">1. General Information</h2>
@@ -61,6 +60,8 @@ const Step1General: React.FC<Step1GeneralProps> = ({ formData, updateFormData })
       </div>
     </FormCard>
   );
-};
+});
+
+Step1General.displayName = 'Step1General';
 
 export default Step1General;

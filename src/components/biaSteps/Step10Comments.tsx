@@ -10,7 +10,7 @@ interface Step10CommentsProps {
   updateFormData: (field: keyof BiaFormData, value: string) => void;
 }
 
-const Step10Comments: React.FC<Step10CommentsProps> = ({ formData, updateFormData }) => {
+const Step10Comments: React.FC<Step10CommentsProps> = React.memo(({ formData, updateFormData }) => {
   return (
     <FormCard>
       <h2 className="text-xl font-bold mb-6">10. Additional Comments</h2>
@@ -28,6 +28,8 @@ const Step10Comments: React.FC<Step10CommentsProps> = ({ formData, updateFormDat
       </div>
     </FormCard>
   );
-};
+});
+
+Step10Comments.displayName = 'Step10Comments';
 
 export default Step10Comments;

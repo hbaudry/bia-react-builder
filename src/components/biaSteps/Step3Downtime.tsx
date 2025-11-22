@@ -11,7 +11,7 @@ interface Step3DowntimeProps {
   updateFormData: (field: keyof BiaFormData, value: string) => void;
 }
 
-const Step3Downtime: React.FC<Step3DowntimeProps> = ({ formData, updateFormData }) => {
+const Step3Downtime: React.FC<Step3DowntimeProps> = React.memo(({ formData, updateFormData }) => {
   return (
     <FormCard>
       <h2 className="text-xl font-bold mb-6">3. Impact of Downtime</h2>
@@ -73,6 +73,8 @@ const Step3Downtime: React.FC<Step3DowntimeProps> = ({ formData, updateFormData 
       </div>
     </FormCard>
   );
-};
+});
+
+Step3Downtime.displayName = 'Step3Downtime';
 
 export default Step3Downtime;

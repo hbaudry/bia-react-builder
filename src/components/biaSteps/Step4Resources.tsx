@@ -10,7 +10,7 @@ interface Step4ResourcesProps {
   updateFormData: (field: keyof BiaFormData, value: string) => void;
 }
 
-const Step4Resources: React.FC<Step4ResourcesProps> = ({ formData, updateFormData }) => {
+const Step4Resources: React.FC<Step4ResourcesProps> = React.memo(({ formData, updateFormData }) => {
   return (
     <FormCard>
       <h2 className="text-xl font-bold mb-6">4. Resource Dependencies</h2>
@@ -52,6 +52,8 @@ const Step4Resources: React.FC<Step4ResourcesProps> = ({ formData, updateFormDat
       </div>
     </FormCard>
   );
-};
+});
+
+Step4Resources.displayName = 'Step4Resources';
 
 export default Step4Resources;

@@ -10,7 +10,7 @@ interface Step7CommunicationProps {
   updateFormData: (field: keyof BiaFormData, value: string) => void;
 }
 
-const Step7Communication: React.FC<Step7CommunicationProps> = ({ formData, updateFormData }) => {
+const Step7Communication: React.FC<Step7CommunicationProps> = React.memo(({ formData, updateFormData }) => {
   return (
     <FormCard>
       <h2 className="text-xl font-bold mb-6">7. Communication and Coordination</h2>
@@ -52,6 +52,8 @@ const Step7Communication: React.FC<Step7CommunicationProps> = ({ formData, updat
       </div>
     </FormCard>
   );
-};
+});
+
+Step7Communication.displayName = 'Step7Communication';
 
 export default Step7Communication;

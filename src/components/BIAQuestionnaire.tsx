@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { BiaFormData, FormStep, initialFormData } from '@/types/bia.types';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
@@ -44,41 +44,42 @@ const BIAQuestionnaire: React.FC = () => {
   const [formData, setFormData] = useState<BiaFormData>(initialFormData);
   const [skippedSteps, setSkippedSteps] = useState<number[]>([]);
   const { toast } = useToast();
-  
-  const updateFormData = (field: keyof BiaFormData, value: string) => {
-    setFormData({
-      ...formData,
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const updateFormData = useCallback((field: keyof BiaFormData, value: string) => {
+    setFormData(prev => ({
+      ...prev,
       [field]: value,
-    });
-  };
+    }));
+  }, []);
   
-  const goToPreviousStep = () => {
+  const goToPreviousStep = useCallback(() => {
     if (currentStep > 1) {
       let prevStep = currentStep - 1;
       while (skippedSteps.includes(prevStep) && prevStep > 1) {
         prevStep--;
       }
       setCurrentStep(prevStep);
-      window.scrollTo(0, 0);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-  };
-  
-  const skipStep = () => {
+  }, [currentStep, skippedSteps]);
+
+  const skipStep = useCallback(() => {
     if (currentStep < steps.length) {
-      setSkippedSteps([...skippedSteps, currentStep]);
+      setSkippedSteps(prev => [...prev, currentStep]);
       setCurrentStep(currentStep + 1);
-      window.scrollTo(0, 0);
-      
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
       toast({
         title: "Step Skipped",
         description: "You can always come back to this step later.",
       });
     }
-  };
-  
-  const goToNextStep = () => {
+  }, [currentStep, toast]);
+
+  const goToNextStep = useCallback(() => {
     const errors = validateFormData(formData, currentStep);
-    
+
     if (errors.length > 0) {
       errors.forEach(error => {
         toast({
@@ -89,42 +90,42 @@ const BIAQuestionnaire: React.FC = () => {
       });
       return;
     }
-    
+
     if (currentStep < steps.length) {
       let nextStep = currentStep + 1;
       while (skippedSteps.includes(nextStep) && nextStep < steps.length) {
         nextStep++;
       }
       setCurrentStep(nextStep);
-      window.scrollTo(0, 0);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-  };
-  
-  const handleExportToCSV = () => {
+  }, [formData, currentStep, skippedSteps, toast]);
+
+  const handleExportToCSV = useCallback(() => {
     exportToCSV(formData);
     toast({
       title: "Export Successful",
       description: "The BIA questionnaire has been exported as a CSV file.",
     });
-  };
-  
-  const handleSubmitAsEmail = () => {
+  }, [formData, toast]);
+
+  const handleSubmitAsEmail = useCallback(() => {
     submitAsEmail(formData);
     toast({
       title: "Email Preparation",
       description: "Your email client should open with the BIA data.",
     });
-  };
-  
-  const handleBackup = () => {
+  }, [formData, toast]);
+
+  const handleBackup = useCallback(() => {
     downloadBackup(formData);
     toast({
       title: "Backup Created",
       description: "Your BIA data has been saved as a JSON file.",
     });
-  };
+  }, [formData, toast]);
 
-  const handleRestore = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleRestore = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -143,12 +144,11 @@ const BIAQuestionnaire: React.FC = () => {
           variant: "destructive",
         });
       });
-  };
+  }, [toast]);
 
-  const handleFileInputChange = (e: Event) => {
-    const inputEvent = e as unknown as ChangeEvent<HTMLInputElement>;
-    handleRestore(inputEvent);
-  };
+  const handleRestoreClick = useCallback(() => {
+    fileInputRef.current?.click();
+  }, []);
 
   const renderStepContent = () => {
     switch (currentStep) {
@@ -194,13 +194,7 @@ const BIAQuestionnaire: React.FC = () => {
                 <Save className="w-4 h-4 mr-2" />
                 Backup Data
               </DropdownMenuItem>
-              <DropdownMenuItem onSelect={(e) => {
-                const input = document.createElement('input');
-                input.type = 'file';
-                input.accept = '.json';
-                input.onchange = handleFileInputChange;
-                input.click();
-              }}>
+              <DropdownMenuItem onClick={handleRestoreClick}>
                 <Upload className="w-4 h-4 mr-2" />
                 Restore Backup
               </DropdownMenuItem>
@@ -209,6 +203,14 @@ const BIAQuestionnaire: React.FC = () => {
         </div>
       </div>
       
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".json"
+        onChange={handleRestore}
+        className="hidden"
+      />
+
       <div className="mb-6 transition-all duration-300 animate-fade-in">
         {renderStepContent()}
       </div>

@@ -10,7 +10,7 @@ interface Step5RecoveryProps {
   updateFormData: (field: keyof BiaFormData, value: string) => void;
 }
 
-const Step5Recovery: React.FC<Step5RecoveryProps> = ({ formData, updateFormData }) => {
+const Step5Recovery: React.FC<Step5RecoveryProps> = React.memo(({ formData, updateFormData }) => {
   return (
     <FormCard>
       <h2 className="text-xl font-bold mb-6">5. Recovery Prioritization</h2>
@@ -52,6 +52,8 @@ const Step5Recovery: React.FC<Step5RecoveryProps> = ({ formData, updateFormData 
       </div>
     </FormCard>
   );
-};
+});
+
+Step5Recovery.displayName = 'Step5Recovery';
 
 export default Step5Recovery;

@@ -10,7 +10,7 @@ interface Step8RtoRpoProps {
   updateFormData: (field: keyof BiaFormData, value: string) => void;
 }
 
-const Step8RtoRpo: React.FC<Step8RtoRpoProps> = ({ formData, updateFormData }) => {
+const Step8RtoRpo: React.FC<Step8RtoRpoProps> = React.memo(({ formData, updateFormData }) => {
   return (
     <FormCard>
       <h2 className="text-xl font-bold mb-6">8. RTO and RPO</h2>
@@ -40,6 +40,8 @@ const Step8RtoRpo: React.FC<Step8RtoRpoProps> = ({ formData, updateFormData }) =
       </div>
     </FormCard>
   );
-};
+});
+
+Step8RtoRpo.displayName = 'Step8RtoRpo';
 
 export default Step8RtoRpo;

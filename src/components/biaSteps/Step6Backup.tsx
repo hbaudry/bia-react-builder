@@ -10,7 +10,7 @@ interface Step6BackupProps {
   updateFormData: (field: keyof BiaFormData, value: string) => void;
 }
 
-const Step6Backup: React.FC<Step6BackupProps> = ({ formData, updateFormData }) => {
+const Step6Backup: React.FC<Step6BackupProps> = React.memo(({ formData, updateFormData }) => {
   return (
     <FormCard>
       <h2 className="text-xl font-bold mb-6">6. Data and Backup</h2>
@@ -64,6 +64,8 @@ const Step6Backup: React.FC<Step6BackupProps> = ({ formData, updateFormData }) =
       </div>
     </FormCard>
   );
-};
+});
+
+Step6Backup.displayName = 'Step6Backup';
 
 export default Step6Backup;
