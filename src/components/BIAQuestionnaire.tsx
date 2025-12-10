@@ -178,31 +178,38 @@ const BIAQuestionnaire: React.FC = () => {
   };
   
   return (
-    <div className="w-full max-w-4xl mx-auto">
-      <div className="bg-white shadow-sm rounded-2xl p-6 mb-8">
-        <div className="flex justify-between items-center mb-4">
-          <StepIndicator steps={steps} currentStep={currentStep} skippedSteps={skippedSteps} />
-          
+    <div className="w-full max-w-5xl mx-auto">
+      {/* Top Control Bar */}
+      <div className="bg-white/80 backdrop-blur-sm shadow-sm rounded-2xl p-6 mb-8 border border-gray-100 animate-fade-in">
+        <div className="flex justify-between items-center mb-4 flex-wrap gap-4">
+          <div className="flex-1 min-w-0">
+            <StepIndicator steps={steps} currentStep={currentStep} skippedSteps={skippedSteps} />
+          </div>
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="icon">
-                <Menu className="h-5 w-5" />
+              <Button
+                variant="outline"
+                size="icon"
+                className="shadow-sm hover:shadow-md transition-shadow hover:bg-bia-primary/5 border-gray-200"
+              >
+                <Menu className="h-5 w-5 text-gray-600" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="bg-white">
-              <DropdownMenuItem onClick={handleBackup}>
-                <Save className="w-4 h-4 mr-2" />
-                Backup Data
+            <DropdownMenuContent align="end" className="bg-white w-52">
+              <DropdownMenuItem onClick={handleBackup} className="cursor-pointer hover:bg-bia-primary/10">
+                <Save className="w-4 h-4 mr-2 text-bia-primary" />
+                <span className="font-medium">Backup Data</span>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleRestoreClick}>
-                <Upload className="w-4 h-4 mr-2" />
-                Restore Backup
+              <DropdownMenuItem onClick={handleRestoreClick} className="cursor-pointer hover:bg-bia-secondary/10">
+                <Upload className="w-4 h-4 mr-2 text-bia-secondary" />
+                <span className="font-medium">Restore Backup</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
       </div>
-      
+
       <input
         ref={fileInputRef}
         type="file"
@@ -211,50 +218,67 @@ const BIAQuestionnaire: React.FC = () => {
         className="hidden"
       />
 
-      <div className="mb-6 transition-all duration-300 animate-fade-in">
+      {/* Form Content */}
+      <div className="mb-8 transition-all duration-500 animate-scale-in">
         {renderStepContent()}
       </div>
-      
-      <div className="flex justify-between mt-10">
+
+      {/* Navigation Buttons */}
+      <div className="flex justify-between items-center mt-10 gap-4 flex-wrap">
         <Button
           onClick={goToPreviousStep}
           disabled={currentStep === 1}
           variant="outline"
-          className="min-w-[140px] py-6 text-base font-medium shadow-sm hover:bg-gray-100"
+          className="min-w-[140px] py-6 text-base font-medium shadow-sm hover:shadow-md transition-all disabled:opacity-40 disabled:cursor-not-allowed border-gray-300 hover:bg-gray-50"
         >
+          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
           Previous
         </Button>
-        
-        <div className="flex gap-3">
+
+        <div className="flex gap-3 flex-wrap">
           {currentStep < steps.length && (
             <Button
               onClick={skipStep}
               variant="outline"
-              className="min-w-[140px] py-6 text-base font-medium shadow-sm bg-soft-gray hover:bg-gray-100"
+              className="min-w-[140px] py-6 text-base font-medium shadow-sm hover:shadow-md transition-all bg-gray-50 hover:bg-gray-100 border-gray-300"
             >
               Skip Step
+              <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+              </svg>
             </Button>
           )}
-          
+
           {currentStep < steps.length ? (
-            <Button 
+            <Button
               onClick={goToNextStep}
-              className="min-w-[140px] py-6 text-base font-medium shadow-md bg-bia-primary hover:bg-bia-primary-hover"
+              className="min-w-[140px] py-6 text-base font-medium shadow-lg hover:shadow-xl transition-all bg-gradient-to-r from-bia-primary to-emerald-600 hover:from-bia-primary-hover hover:to-emerald-700 text-white"
             >
               Continue
+              <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
             </Button>
           ) : (
-            <div className="flex gap-3">
-              <Button 
+            <div className="flex gap-3 flex-wrap">
+              <Button
                 onClick={handleSubmitAsEmail}
-                className="min-w-[140px] py-6 text-base font-medium shadow-md bg-bia-primary hover:bg-bia-primary-hover"
+                className="min-w-[140px] py-6 text-base font-medium shadow-lg hover:shadow-xl transition-all bg-gradient-to-r from-bia-primary to-emerald-600 hover:from-bia-primary-hover hover:to-emerald-700 text-white"
               >
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
                 Submit as Email
               </Button>
-              <Button 
+              <Button
                 onClick={handleExportToCSV}
-                className="min-w-[140px] py-6 text-base font-medium shadow-md bg-bia-secondary hover:bg-bia-secondary-hover"
+                className="min-w-[140px] py-6 text-base font-medium shadow-lg hover:shadow-xl transition-all bg-gradient-to-r from-bia-secondary to-blue-700 hover:from-bia-secondary-hover hover:to-blue-800 text-white"
               >
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
                 Export as CSV
               </Button>
             </div>
